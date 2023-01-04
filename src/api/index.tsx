@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from 'axios';
-import { Album } from '../App';
 import { SERVER_URL } from '../config';
 
 axios.defaults.baseURL = SERVER_URL;
