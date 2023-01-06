@@ -12,6 +12,8 @@
     "@types/react-dom": "^18.0.0",
     "@types/styled-components": "^5.1.26",
     "axios": "^1.2.2",
+    "dom-to-image": "^2.6.0",
+    "file-saver": "^2.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -43,5 +45,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/dom-to-image": "^2.6.4",
+    "@types/file-saver": "^2.0.5"
   }
 }

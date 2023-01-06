@@ -1,16 +1,21 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState, useRef } from 'react';
+import domtoimage from 'dom-to-image';
+import { saveAs } from 'file-saver';
 import useDebounce from './hooks/useDebounce';
 import { getCover } from './api';
 import List from './components/List';
 import chandler from './asset/chandler.png';
 import styled from 'styled-components';
-import { media, Message, textShadow } from './style/Mixin';
+import { media, memeFont, Message } from './style/Mixin';
 
 const H1 = styled.h1`
-  font-family: Impact, 'GmarketSansMedium', sans-serif;
+  line-height: 1;
   font-size: 2.5rem;
-  color: #ffffff;
-  ${textShadow('#000000')}
+  ${memeFont}
+  span {
+    ${memeFont}
+    color: #2cb76f;
+  }
 `;
 
 const Form = styled.div`
@@ -42,10 +47,8 @@ const Sample = styled.div`
   width: 100%;
   height: 100%;
   text-align: center;
+  ${memeFont}
   font-size: 3.5rem;
-  font-family: Impact, 'GmarketSansMedium', sans-serif;
-  color: #ffffff;
-  ${textShadow('#000000')}
   background-color: #e2e8f0;
 `;
 
@@ -61,8 +64,8 @@ const Container = styled.div`
   overflow: hidden;
 
   ${media} {
-    width: 350px;
-    height: 350px;
+    width: 360px;
+    height: 360px;
 
     ${Sample} {
       padding: 20px 0;
@@ -70,11 +73,29 @@ const Container = styled.div`
     }
 
     ${Wrap} {
-      width: 172px;
-      height: 172px;
-      right: 89px;
+      width: 177px;
+      height: 177px;
+      right: 92px;
       bottom: 0px;
     }
+  }
+`;
+
+const Saved = styled.div`
+  position: relative;
+`;
+
+const Button = styled.button`
+  ${memeFont}
+  padding: 5px 20px;
+  margin: 10px;
+  font-size: 2rem;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 10px;
+  &:hover {
+    cursor: pointer;
+    background-color: #2cb76f;
   }
 `;
 
@@ -94,7 +115,8 @@ const Input = styled.input`
   position: relative;
   padding: 10px;
   width: 100%;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  padding: 10px;
   border: 1px solid #e2e8f0;
 `;
 
@@ -118,6 +140,7 @@ function App() {
   const [cover, setCover] = useState<string>('');
   const [hidden, setHidden] = useState<boolean>(false);
   const debouncedSearch = useDebounce(query);
+  const savedRef = useRef<HTMLDivElement>(null);
 
   const searchCover = async () => {
     setIsLoading(true);
@@ -156,16 +179,33 @@ function App() {
     setHidden(false);
   };
 
+  const handleSave = () => {
+    const savedImg = savedRef.current;
+
+    if (savedImg) {
+      const isSmall = savedImg.clientWidth === 360;
+      const options = isSmall
+        ? {
+            width: savedImg.clientWidth * 2,
+            height: savedImg.clientHeight * 2,
+            style: {
+              transform: 'scale(2)',
+              'transform-origin': '0% 0%',
+            },
+          }
+        : undefined;
+      domtoimage.toBlob(savedImg, options).then((blob) => {
+        saveAs(blob, `chandler.png`);
+      });
+    }
+  };
+
   return (
     <Main>
       <H1>
-        Chandler
+        <span>C</span>handler <span>H</span>ugging
         <br />
-        Hugging my
-        <br />
-        Favorite
-        <br />
-        Album
+        my <span>F</span>avorite <span>A</span>lbum
       </H1>
       <Form>
         <Input
@@ -173,29 +213,33 @@ function App() {
           type="search"
           value={query}
           onChange={handleChange}
+          placeholder={`검색어를 입력하세요.`}
         />
         <Result className={hidden ? 'hidden' : ''}>
           {isLoading ? (
-            <Message>loading</Message>
+            <Message>Loading...</Message>
           ) : (
             <List data={data} handleClick={handleClick} />
           )}
         </Result>
       </Form>
-      <Container>
-        <ImgChandler src={chandler} alt="chandler" />
-        <Wrap>
-          {cover ? (
-            <CoverStyle src={cover} alt="cover" />
-          ) : (
-            <Sample>
-              ADD YOUR
-              <br />
-              FAVORITE ALBUM
-            </Sample>
-          )}
-        </Wrap>
-      </Container>
+      <Saved ref={savedRef}>
+        <Container>
+          <ImgChandler src={chandler} alt="chandler" />
+          <Wrap>
+            {cover ? (
+              <CoverStyle src={cover} alt="cover" />
+            ) : (
+              <Sample>
+                ADD YOUR
+                <br />
+                FAVORITE ALBUM
+              </Sample>
+            )}
+          </Wrap>
+        </Container>
+      </Saved>
+      <Button onClick={handleSave}>SAVE AS</Button>
     </Main>
   );
 }
