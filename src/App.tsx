@@ -4,6 +4,7 @@ import { saveAs } from 'file-saver';
 import useDebounce from './hooks/useDebounce';
 import { getCover } from './api';
 import List from './components/List';
+import Footer from './components/Footer';
 import chandler from './asset/chandler.png';
 import styled from 'styled-components';
 import { media, memeFont, Message } from './style/Mixin';
@@ -88,7 +89,7 @@ const Saved = styled.div`
 const Button = styled.button`
   ${memeFont}
   padding: 5px 20px;
-  margin: 10px;
+  margin: 40px;
   font-size: 2rem;
   background-color: #ffffff;
   border: 2px solid #000000;
@@ -201,46 +202,49 @@ function App() {
   };
 
   return (
-    <Main>
-      <H1>
-        <span>C</span>handler <span>H</span>ugging
-        <br />
-        my <span>F</span>avorite <span>A</span>lbum
-      </H1>
-      <Form>
-        <Input
-          onFocus={handleFocus}
-          type="search"
-          value={query}
-          onChange={handleChange}
-          placeholder={`검색어를 입력하세요.`}
-        />
-        <Result className={hidden ? 'hidden' : ''}>
-          {isLoading ? (
-            <Message>Loading...</Message>
-          ) : (
-            <List data={data} handleClick={handleClick} />
-          )}
-        </Result>
-      </Form>
-      <Saved ref={savedRef}>
-        <Container>
-          <ImgChandler src={chandler} alt="chandler" />
-          <Wrap>
-            {cover ? (
-              <CoverStyle src={cover} alt="cover" />
+    <>
+      <Main>
+        <H1>
+          <span>C</span>handler <span>H</span>ugging
+          <br />
+          my <span>F</span>avorite <span>A</span>lbum
+        </H1>
+        <Form>
+          <Input
+            onFocus={handleFocus}
+            type="search"
+            value={query}
+            onChange={handleChange}
+            placeholder={`Find your favorite album`}
+          />
+          <Result className={hidden ? 'hidden' : ''}>
+            {isLoading ? (
+              <Message>Loading...</Message>
             ) : (
-              <Sample>
-                ADD YOUR
-                <br />
-                FAVORITE ALBUM
-              </Sample>
+              <List data={data} handleClick={handleClick} />
             )}
-          </Wrap>
-        </Container>
-      </Saved>
-      <Button onClick={handleSave}>SAVE AS</Button>
-    </Main>
+          </Result>
+        </Form>
+        <Saved ref={savedRef}>
+          <Container>
+            <ImgChandler src={chandler} alt="chandler" />
+            <Wrap>
+              {cover ? (
+                <CoverStyle src={cover} alt="cover" />
+              ) : (
+                <Sample>
+                  ADD YOUR
+                  <br />
+                  FAVORITE ALBUM
+                </Sample>
+              )}
+            </Wrap>
+          </Container>
+        </Saved>
+        <Button onClick={handleSave}>SAVE AS</Button>
+      </Main>
+      <Footer />
+    </>
   );
 }
 
