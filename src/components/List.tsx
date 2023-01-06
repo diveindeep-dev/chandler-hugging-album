@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import styled from 'styled-components';
 import { Box, Message } from '../style/Mixin';
 
 interface ListProps {
   data: Album[] | string;
-  handleClick: (cover: string) => void;
+  handleClick: (cover: CoverData) => void;
 }
 
 const LI = styled.li`
@@ -45,12 +45,17 @@ function List(props: ListProps) {
     <Message>{data}</Message>
   ) : (
     data.map((album: Album, i: number) => {
-      const cover = album.image[3]['#text'];
+      const img = album.image[3]['#text'];
+      const cover = {
+        name: album.name,
+        artist: album.artist,
+        image: img,
+      };
 
       return (
         <LI key={i} onClick={() => handleClick(cover)}>
           <Container>
-            <Thumbnail src={cover} alt={`${album.name}-cover`} />
+            <Thumbnail src={img} alt={`${album.name}-cover`} />
             <Info>
               <Name>{album.name}</Name>
               <Artist>{album.artist}</Artist>

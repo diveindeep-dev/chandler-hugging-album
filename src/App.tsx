@@ -1,9 +1,10 @@
-import React, { ChangeEvent, useEffect, useState, useRef } from 'react';
+import { ChangeEvent, useEffect, useState, useRef } from 'react';
 import domtoimage from 'dom-to-image';
 import { saveAs } from 'file-saver';
 import useDebounce from './hooks/useDebounce';
 import { getCover } from './api';
 import List from './components/List';
+import Toggle from './components/Toggle';
 import Footer from './components/Footer';
 import chandler from './asset/chandler.png';
 import styled from 'styled-components';
@@ -89,7 +90,7 @@ const Saved = styled.div`
 const Button = styled.button`
   ${memeFont}
   padding: 5px 20px;
-  margin: 40px;
+  margin: 20px;
   font-size: 2rem;
   background-color: #ffffff;
   border: 2px solid #000000;
@@ -105,10 +106,38 @@ const Result = styled.div`
   width: 100%;
   max-height: 450px;
   overflow: auto;
-  z-index: 11;
+  z-index: 20;
 
   ${media} {
     max-height: 270px;
+  }
+`;
+
+const Info = styled.div`
+  ${memeFont}
+  position: absolute;
+  top: 0;
+  padding: 10px 20px 0px;
+  width: 100%;
+  text-align: center;
+  font-size: 2.6rem;
+  z-index: 11;
+
+  ${media} {
+    font-size: 1.2rem;
+  }
+`;
+
+const Switch = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 20px 0;
+  width: 720px;
+  font-size: 0.9rem;
+
+  ${media} {
+    width: 350px;
   }
 `;
 
@@ -138,8 +167,9 @@ function App() {
   const [query, setQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<Album[] | string>([]);
-  const [cover, setCover] = useState<string>('');
+  const [cover, setCover] = useState<CoverData>();
   const [hidden, setHidden] = useState<boolean>(false);
+  const [isOn, setIsOn] = useState<boolean>(false);
   const debouncedSearch = useDebounce(query);
   const savedRef = useRef<HTMLDivElement>(null);
 
@@ -171,7 +201,7 @@ function App() {
     }
   }, [debouncedSearch]);
 
-  const handleClick = (cover: string) => {
+  const handleClick = (cover: CoverData) => {
     setCover(cover);
     setHidden(true);
   };
@@ -230,7 +260,7 @@ function App() {
             <ImgChandler src={chandler} alt="chandler" />
             <Wrap>
               {cover ? (
-                <CoverStyle src={cover} alt="cover" />
+                <CoverStyle src={cover.image} alt="cover" />
               ) : (
                 <Sample>
                   ADD YOUR
@@ -240,7 +270,16 @@ function App() {
               )}
             </Wrap>
           </Container>
+          {isOn && cover && <Info>{`${cover.artist} - ${cover.name}`}</Info>}
         </Saved>
+        <Switch>
+          OFF
+          <Toggle
+            isChecked={isOn}
+            handleToggle={() => setIsOn((prev) => !prev)}
+          />
+          ON
+        </Switch>
         <Button onClick={handleSave}>SAVE AS</Button>
       </Main>
       <Footer />

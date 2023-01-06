@@ -11,3 +11,9 @@ interface Album {
   url: string;
   streamable: string;
 }
+
+interface CoverData {
+  artist: string;
+  name: string;
+  image: string;
+}
