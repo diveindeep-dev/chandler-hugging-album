@@ -225,9 +225,20 @@ function App() {
             },
           }
         : undefined;
-      domtoimage.toBlob(savedImg, options).then((blob) => {
-        saveAs(blob, `chandler.png`);
-      });
+
+      (async () => {
+        const generate = await domtoimage.toBlob(savedImg, options);
+        try {
+          const blob = await domtoimage.toBlob(savedImg, options);
+          try {
+            saveAs(blob, 'chandler.png');
+          } catch {
+            saveAs(generate, 'chander.png');
+          }
+        } catch {
+          console.log('Retry');
+        }
+      })();
     }
   };
 
@@ -257,7 +268,7 @@ function App() {
         </Form>
         <Saved ref={savedRef}>
           <Container>
-            <ImgChandler src={chandler} alt="chandler" />
+            <ImgChandler src={chandler} alt="chandler" className="check" />
             <Wrap>
               {cover ? (
                 <CoverStyle src={cover.image} alt="cover" />
