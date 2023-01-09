@@ -227,13 +227,14 @@ function App() {
         : undefined;
 
       (async () => {
+        const fileName = cover?.name.replaceAll(' ', '').slice(0).toLowerCase();
         const generate = await domtoimage.toBlob(savedImg, options);
         try {
           const blob = await domtoimage.toBlob(savedImg, options);
           try {
-            saveAs(blob, 'chandler.png');
+            saveAs(blob, `chandler_hugging_${fileName}.png`);
           } catch {
-            saveAs(generate, 'chander.png');
+            saveAs(generate, `chandler_hugging_${fileName}.png`);
           }
         } catch {
           console.log('Retry');
